@@ -23,6 +23,10 @@ repositories {
         name = "Jitpack"
         url = URI("https://jitpack.io/")
     }
+    maven {
+        name = "Sonatype Central"
+        url = URI("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
 }
 
 dependencies {

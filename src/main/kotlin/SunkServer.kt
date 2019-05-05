@@ -1,5 +1,14 @@
 package flavor.pie.sunkcost
 
+import flavor.pie.kludge.*
+import flavor.pie.sunkcost.command.SunkConsoleCommandSender
+import flavor.pie.sunkcost.inventory.CustomHolderProperty
+import flavor.pie.sunkcost.inventory.SunkInventory
+import flavor.pie.sunkcost.inventory.SunkInventoryHolder
+import flavor.pie.sunkcost.inventory.toArchetype
+import flavor.pie.sunkcost.inventory.toGuiId
+import flavor.pie.sunkcost.plugin.SunkPluginManager
+import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.BanList
 import org.bukkit.GameMode
 import org.bukkit.NamespacedKey
@@ -36,55 +45,99 @@ import org.bukkit.plugin.messaging.Messenger
 import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.scoreboard.ScoreboardManager
 import org.bukkit.util.CachedServerIcon
+import org.spongepowered.api.item.inventory.InventoryArchetypes
+import org.spongepowered.api.item.inventory.property.GuiIdProperty
+import org.spongepowered.api.item.inventory.property.InventoryDimension
+import org.spongepowered.api.item.inventory.property.InventoryTitle
+import org.spongepowered.api.service.whitelist.WhitelistService
+import org.spongepowered.api.text.channel.MessageChannel
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.UUID
 import java.util.logging.Logger
+import org.spongepowered.api.item.inventory.Inventory as SInventory
 
 object SunkServer : Server {
-    override fun isHardcore(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun isHardcore(): Boolean = false // not exposed
+
+    override fun createInventory(owner: InventoryHolder?, type: InventoryType): Inventory {
+        val inventory = SInventory.builder()
+            .of(type.toArchetype())
+        type.toGuiId()?.let { inventory.property(GuiIdProperty(it)) }
+        if (owner != null) {
+            if (owner is SunkInventoryHolder) {
+                inventory.forCarrier(owner.carrier)
+            } else {
+                inventory.property(CustomHolderProperty(owner))
+            }
+        }
+        return SunkInventory(inventory.build(plugin))
     }
 
-    override fun createInventory(owner: InventoryHolder?, type: InventoryType?): Inventory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun createInventory(owner: InventoryHolder?, type: InventoryType?, title: String?): Inventory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun createInventory(owner: InventoryHolder?, type: InventoryType, title: String): Inventory {
+        val inventory = SInventory.builder()
+            .of(type.toArchetype())
+            .property(InventoryTitle.of(title.textByCode()))
+        type.toGuiId()?.let { inventory.property(GuiIdProperty(it)) }
+        if (owner != null) {
+            if (owner is SunkInventoryHolder) {
+                inventory.forCarrier(owner.carrier)
+            } else {
+                inventory.property(CustomHolderProperty(owner))
+            }
+        }
+        return SunkInventory(inventory.build(plugin))
     }
 
     override fun createInventory(owner: InventoryHolder?, size: Int): Inventory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (size % 9 != 0 || size == 0) {
+            throw IllegalArgumentException("size")
+        }
+        val inventory = SInventory.builder()
+            .of(InventoryArchetypes.CHEST)
+            .property(InventoryDimension.of(9, size / 9))
+        if (owner != null) {
+            if (owner is SunkInventoryHolder) {
+                inventory.forCarrier(owner.carrier)
+            } else {
+                inventory.property(CustomHolderProperty(owner))
+            }
+        }
+        return SunkInventory(inventory.build(plugin))
     }
 
-    override fun createInventory(owner: InventoryHolder?, size: Int, title: String?): Inventory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun createInventory(owner: InventoryHolder?, size: Int, title: String): Inventory {
+        if (size % 9 == 0 || size == 0) {
+            throw IllegalArgumentException("size")
+        }
+        val inventory = SInventory.builder()
+            .of(InventoryArchetypes.CHEST)
+            .property(InventoryDimension.of(9, size / 9))
+        if (owner != null) {
+            if (owner is SunkInventoryHolder) {
+                inventory.forCarrier(owner.carrier)
+            } else {
+                inventory.property(CustomHolderProperty(owner))
+            }
+        }
+        return SunkInventory(inventory.build(plugin))
     }
 
-    override fun getSpawnRadius(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getSpawnRadius(): Int = 16 // not exposed
 
     override fun getOperators(): MutableSet<OfflinePlayer> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun savePlayers() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun savePlayers() {} // not exposed
 
     override fun getLogger(): Logger {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getIp(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getIp(): String = Server.boundAddress.map { it.hostString }.orElse("")
 
-    override fun getConsoleSender(): ConsoleCommandSender {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getConsoleSender(): ConsoleCommandSender = SunkConsoleCommandSender(Server.console)
 
     override fun addRecipe(recipe: Recipe?): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -98,13 +151,9 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getPort(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getPort(): Int = Server.boundAddress.map { it.port }.unwrap() ?: 25565
 
-    override fun getVersion(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getVersion(): String = SunkCost.VERSION
 
     override fun getMap(id: Short): MapView {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -126,17 +175,11 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getIdleTimeout(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getIdleTimeout(): Int = Server.playerIdleTimeout
 
-    override fun getMaxPlayers(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getMaxPlayers(): Int = Server.maxPlayers
 
-    override fun spigot(): Server.Spigot {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun spigot(): Server.Spigot = Spigot
 
     override fun getAdvancement(key: NamespacedKey?): Advancement {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -210,9 +253,7 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getShutdownMessage(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getShutdownMessage(): String = "Server shutting down"
 
     override fun getConnectionThrottle(): Long {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -239,7 +280,7 @@ object SunkServer : Server {
     }
 
     override fun shutdown() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Server.shutdown()
     }
 
     override fun getOnlineMode(): Boolean {
@@ -254,9 +295,7 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getWorldType(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getWorldType(): String = Server.defaultWorld.unwrap()?.generatorType?.name?.toUpperCase() ?: "DEFAULT"
 
     override fun reload() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -366,9 +405,7 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getName(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getName(): String = SunkCost.NAME
 
     override fun getPluginCommand(name: String?): PluginCommand {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -410,16 +447,20 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun isPrimaryThread(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun isPrimaryThread(): Boolean = Server.isMainThread
+
+    override fun getServerId(): String = id
+
+    private var id = ""
+
+    internal fun setServerId(id: String) {
+        this.id = id
     }
 
-    override fun getServerId(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun broadcast(message: String?, permission: String?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun broadcast(message: String, permission: String): Int {
+        val chan = MessageChannel.permission(permission)
+        chan.send(message.textByCode())
+        return chan.members.size
     }
 
     override fun loadServerIcon(file: File?): CachedServerIcon {
@@ -431,16 +472,15 @@ object SunkServer : Server {
     }
 
     override fun hasWhitelist(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val svc: WhitelistService? by Service
+        return svc?.whitelistedProfiles?.isNotEmpty() ?: false
     }
 
     override fun getUpdateFolder(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getPluginManager(): PluginManager {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getPluginManager(): PluginManager = SunkPluginManager
 
     override fun matchPlayer(name: String?): MutableList<Player> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -448,5 +488,18 @@ object SunkServer : Server {
 
     override fun getMessenger(): Messenger {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    object Spigot : Server.Spigot() {
+
+        override fun broadcast(component: BaseComponent) {
+            Server.broadcastChannel.send(component.toText())
+        }
+
+        override fun broadcast(vararg components: BaseComponent) {
+            for (component in components) {
+                Server.broadcastChannel.send(component.toText())
+            }
+        }
     }
 }
