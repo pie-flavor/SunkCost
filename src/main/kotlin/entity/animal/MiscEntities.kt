@@ -1,4 +1,4 @@
-package flavor.pie.sunkcost.entity
+package flavor.pie.sunkcost.entity.animal
 
 import org.bukkit.entity.Chicken
 import org.bukkit.entity.Cow

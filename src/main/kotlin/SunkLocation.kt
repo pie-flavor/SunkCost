@@ -12,6 +12,8 @@ import org.spongepowered.api.world.Location as SLocation
 
 fun SLocation<SWorld>.bLocation(): Location = Location(SunkWorld(extent), x, y, z)
 
+fun Location.sLocation(): SLocation<SWorld> = (world as SunkWorld).world.getLocation(vector3d())
+
 fun Location.vector3i(): Vector3i = Vector3i(blockX, blockY, blockZ)
 
 fun Location.vector3d(): Vector3d = Vector3d(x, y, z)

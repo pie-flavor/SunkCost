@@ -1,5 +1,6 @@
-package flavor.pie.sunkcost.entity
+package flavor.pie.sunkcost.entity.animal
 
+import flavor.pie.sunkcost.entity.SunkAgeable
 import org.bukkit.entity.Animals
 import org.spongepowered.api.entity.living.animal.Animal
 

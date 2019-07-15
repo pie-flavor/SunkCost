@@ -1,10 +1,12 @@
-package flavor.pie.sunkcost.entity
+package flavor.pie.sunkcost.entity.animal
 
+import flavor.pie.sunkcost.entity.SunkTameable
+import flavor.pie.sunkcost.inventory.SunkInventoryHolder
 import org.bukkit.entity.AbstractHorse
 import org.bukkit.entity.Horse
 import org.spongepowered.api.entity.living.animal.Animal
 
-abstract class SunkAbstractHorse(entity: Animal) : SunkTameable(entity), AbstractHorse {
+abstract class SunkAbstractHorse(entity: Animal) : SunkTameable(entity), AbstractHorse, SunkInventoryHolder {
 
     override fun setDomestication(level: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

@@ -2,6 +2,7 @@ package flavor.pie.sunkcost.command
 
 import flavor.pie.sunkcost.SunkServer
 import flavor.pie.sunkcost.permissions.SunkProxyPermissible
+import flavor.pie.sunkcost.text
 import flavor.pie.sunkcost.textByCode
 import flavor.pie.sunkcost.toText
 import net.md_5.bungee.api.chat.BaseComponent
@@ -17,7 +18,7 @@ open class SunkCommandSender(val source: CommandSource) : CommandSender, Permiss
     }
 
     override fun sendMessage(messages: Array<out String>) {
-        source.sendMessages(messages.map { it.textByCode() })
+        source.sendMessage(messages.map { it.textByCode() }.text())
     }
 
     override fun spigot(): CommandSender.Spigot = Spigot(this)
@@ -33,7 +34,7 @@ open class SunkCommandSender(val source: CommandSource) : CommandSender, Permiss
         }
 
         override fun sendMessage(vararg components: BaseComponent) {
-            sender.source.sendMessages(components.map { it.toText() })
+            sender.source.sendMessage(components.map { it.toText() }.text())
         }
     }
 }

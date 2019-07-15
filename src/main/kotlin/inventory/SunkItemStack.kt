@@ -15,6 +15,7 @@ class SunkItemStack(val stack: SItemStack) : ItemStack() {
         private fun ItemStack.toSponge(): SItemStack {
             TODO()
         }
+        fun empty(): SunkItemStack = TODO()
     }
 
 

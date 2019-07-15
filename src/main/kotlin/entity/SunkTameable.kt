@@ -1,6 +1,7 @@
 package flavor.pie.sunkcost.entity
 
 import flavor.pie.kludge.*
+import flavor.pie.sunkcost.entity.animal.SunkAnimals
 import org.bukkit.entity.AnimalTamer
 import org.bukkit.entity.Tameable
 import org.spongepowered.api.data.key.Keys

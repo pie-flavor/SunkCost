@@ -23,30 +23,32 @@ import org.spongepowered.api.text.format.TextStyle
 import org.spongepowered.api.text.format.TextStyles
 import org.spongepowered.api.text.selector.Selector
 
-fun ChatColor.toTextColor(): TextFormat = when (this) {
-    ChatColor.AQUA -> TextColors.AQUA.format()
-    ChatColor.BLACK -> TextColors.BLACK.format()
-    ChatColor.BLUE -> TextColors.BLUE.format()
-    ChatColor.BOLD -> TextStyles.BOLD.format()
-    ChatColor.DARK_AQUA -> TextColors.DARK_AQUA.format()
-    ChatColor.DARK_BLUE -> TextColors.DARK_BLUE.format()
-    ChatColor.DARK_GRAY -> TextColors.DARK_GRAY.format()
-    ChatColor.DARK_GREEN -> TextColors.DARK_GREEN.format()
-    ChatColor.DARK_PURPLE -> TextColors.DARK_PURPLE.format()
-    ChatColor.DARK_RED -> TextColors.DARK_RED.format()
-    ChatColor.GOLD -> TextColors.GOLD.format()
-    ChatColor.GRAY -> TextColors.GRAY.format()
-    ChatColor.GREEN -> TextColors.GREEN.format()
-    ChatColor.ITALIC -> TextStyles.ITALIC.format()
-    ChatColor.LIGHT_PURPLE -> TextColors.LIGHT_PURPLE.format()
-    ChatColor.MAGIC -> TextStyles.OBFUSCATED.format()
-    ChatColor.RED -> TextColors.RED.format()
-    ChatColor.RESET -> TextStyles.RESET.format()
-    ChatColor.STRIKETHROUGH -> TextStyles.STRIKETHROUGH.format()
-    ChatColor.UNDERLINE -> TextStyles.UNDERLINE.format()
-    ChatColor.WHITE -> TextColors.WHITE.format()
-    ChatColor.YELLOW -> TextColors.YELLOW.format()
-}
+val chatColorMap: Map<ChatColor, TextFormat> = mapOf(
+    ChatColor.AQUA to TextColors.AQUA.format(),
+    ChatColor.BLACK to TextColors.BLACK.format(),
+    ChatColor.BLUE to TextColors.BLUE.format(),
+    ChatColor.BOLD to TextStyles.BOLD.format(),
+    ChatColor.DARK_AQUA to TextColors.DARK_AQUA.format(),
+    ChatColor.DARK_BLUE to TextColors.DARK_BLUE.format(),
+    ChatColor.DARK_GRAY to TextColors.DARK_GRAY.format(),
+    ChatColor.DARK_GREEN to TextColors.DARK_GREEN.format(),
+    ChatColor.DARK_PURPLE to TextColors.DARK_PURPLE.format(),
+    ChatColor.DARK_RED to TextColors.DARK_RED.format(),
+    ChatColor.GOLD to TextColors.GOLD.format(),
+    ChatColor.GRAY to TextColors.GRAY.format(),
+    ChatColor.GREEN to TextColors.GREEN.format(),
+    ChatColor.ITALIC to TextStyles.ITALIC.format(),
+    ChatColor.LIGHT_PURPLE to TextColors.LIGHT_PURPLE.format(),
+    ChatColor.MAGIC to TextStyles.OBFUSCATED.format(),
+    ChatColor.RED to TextColors.RED.format(),
+    ChatColor.RESET to TextStyles.RESET.format(),
+    ChatColor.STRIKETHROUGH to TextStyles.STRIKETHROUGH.format(),
+    ChatColor.UNDERLINE to TextStyles.UNDERLINE.format(),
+    ChatColor.WHITE to TextColors.WHITE.format(),
+    ChatColor.YELLOW to TextColors.YELLOW.format()
+)
+
+fun ChatColor.toTextColor(): TextFormat = chatColorMap.getValue(this)
 
 fun TextColor.format(): TextFormat = TextFormat.of(this)
 fun TextStyle.format(): TextFormat = TextFormat.of(this)
@@ -122,6 +124,8 @@ fun BaseComponent.toText(): Text {
     }
     return builder.build()
 }
+
+fun Iterable<Text>.text(): Text = Text.builder().append(this).build()
 
 val Slot.slotIndex: Int? get() = getInventoryProperty(SlotIndex::class.java).unwrap()?.value
 

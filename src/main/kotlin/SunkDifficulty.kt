@@ -1,20 +1,18 @@
 package flavor.pie.sunkcost
 
+import com.google.common.collect.BiMap
+import com.google.common.collect.HashBiMap
 import org.bukkit.Difficulty
 import org.spongepowered.api.world.difficulty.Difficulties
 import org.spongepowered.api.world.difficulty.Difficulty as SDifficulty
 
-fun Difficulty.sDifficulty(): SDifficulty = when (this) {
-    Difficulty.EASY -> Difficulties.EASY
-    Difficulty.HARD -> Difficulties.HARD
-    Difficulty.NORMAL -> Difficulties.NORMAL
-    Difficulty.PEACEFUL -> Difficulties.PEACEFUL
-}
+private val difficultyMap: BiMap<Difficulty, SDifficulty> = HashBiMap.create(mapOf(
+    Difficulty.EASY to Difficulties.EASY,
+    Difficulty.HARD to Difficulties.HARD,
+    Difficulty.NORMAL to Difficulties.NORMAL,
+    Difficulty.PEACEFUL to Difficulties.PEACEFUL
+))
 
-fun SDifficulty.bDifficulty(): Difficulty = when (this) {
-    Difficulties.EASY -> Difficulty.EASY
-    Difficulties.HARD -> Difficulty.HARD
-    Difficulties.NORMAL -> Difficulty.NORMAL
-    Difficulties.PEACEFUL -> Difficulty.PEACEFUL
-    else -> throw IllegalArgumentException("this") //todo modded
-}
+fun Difficulty.sDifficulty(): SDifficulty = difficultyMap.getValue(this)
+
+fun SDifficulty.bDifficulty(): Difficulty = difficultyMap.inverse()[this] ?: TODO("modded")
