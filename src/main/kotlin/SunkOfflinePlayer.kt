@@ -46,10 +46,14 @@ open class SunkOfflinePlayer(val user: User): OfflinePlayer, Permissible by Sunk
     override fun getLastPlayed(): Long = user[Keys.LAST_DATE_PLAYED].unwrap()?.epochSecond ?: 0
 
     override fun serialize(): MutableMap<String, Any> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("serialization") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getFirstPlayed(): Long = user[Keys.FIRST_DATE_PLAYED].unwrap()?.epochSecond ?: 0
 
     override fun isOnline(): Boolean = user.isOnline
+
+    override fun equals(other: Any?): Boolean = other is OfflinePlayer && uniqueId == other.uniqueId
+
+    override fun hashCode(): Int = uniqueId.hashCode()
 }

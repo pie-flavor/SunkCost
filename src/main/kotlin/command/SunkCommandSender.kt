@@ -27,6 +27,10 @@ open class SunkCommandSender(val source: CommandSource) : CommandSender, Permiss
 
     override fun getServer(): Server = SunkServer
 
+    override fun equals(other: Any?): Boolean = other is SunkCommandSender && source == other.source
+
+    override fun hashCode(): Int = source.hashCode()
+
     class Spigot(private val sender: SunkCommandSender) : CommandSender.Spigot() {
 
         override fun sendMessage(component: BaseComponent) {

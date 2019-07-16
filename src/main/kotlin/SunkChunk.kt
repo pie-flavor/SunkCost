@@ -73,4 +73,9 @@ class SunkChunk(val chunk: SChunk) : Chunk {
     override fun load(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun equals(other: Any?): Boolean = other is SunkChunk && chunk == other.chunk
+
+    override fun hashCode(): Int = chunk.hashCode()
+
 }

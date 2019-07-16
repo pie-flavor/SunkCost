@@ -26,4 +26,5 @@ open class SunkWolf(override val entity: SWolf) : SunkTameable(entity), Sittable
     override fun isAngry(): Boolean = entity[Keys.ANGRY].unwrap() ?: false
 
     override fun getCollarColor(): DyeColor? = entity[Keys.DYE_COLOR].unwrap()?.bDyeColor()
+
 }

@@ -733,6 +733,10 @@ class SunkWorld(val world: SWorld) : World, Metadatable by SunkProxyMetadatable(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun equals(other: Any?): Boolean = other is SunkWorld && other.world == world
+
+    override fun hashCode(): Int = world.hashCode()
+
     class Spigot(val world: SunkWorld) : World.Spigot() {
 
         override fun playEffect(location: Location?, effect: Effect?) {

@@ -247,6 +247,10 @@ abstract class SunkEntity protected constructor(open val entity: SEntity) : Enti
         entity[Keys.INVULNERABLE] = flag
     }
 
+    override fun equals(other: Any?): Boolean = other is Entity && uniqueId == other.uniqueId
+
+    override fun hashCode(): Int = uniqueId.hashCode()
+
     open class Spigot(private val entity: SunkEntity) : Entity.Spigot() {
         override fun sendMessage(component: BaseComponent) {} // not a player
 

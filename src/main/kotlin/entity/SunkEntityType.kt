@@ -1,5 +1,7 @@
 package flavor.pie.sunkcost.entity
 
+import com.google.common.collect.BiMap
+import com.google.common.collect.HashBiMap
 import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Arrow
@@ -71,6 +73,7 @@ import org.bukkit.entity.Spider
 import org.bukkit.entity.SplashPotion
 import org.bukkit.entity.Squid
 import org.bukkit.entity.Stray
+import org.bukkit.entity.TNTPrimed
 import org.bukkit.entity.ThrownExpBottle
 import org.bukkit.entity.TippedArrow
 import org.bukkit.entity.Vex
@@ -86,294 +89,208 @@ import org.bukkit.entity.Zombie
 import org.bukkit.entity.ZombieHorse
 import org.bukkit.entity.ZombieVillager
 import org.bukkit.entity.minecart.CommandMinecart
+import org.bukkit.entity.minecart.ExplosiveMinecart
 import org.bukkit.entity.minecart.HopperMinecart
+import org.bukkit.entity.minecart.PoweredMinecart
+import org.bukkit.entity.minecart.SpawnerMinecart
+import org.bukkit.entity.minecart.StorageMinecart
 import org.spongepowered.api.entity.EntityTypes
-import org.spongepowered.api.entity.explosive.PrimedTNT
-import org.spongepowered.api.entity.vehicle.minecart.ChestMinecart
-import org.spongepowered.api.entity.vehicle.minecart.FurnaceMinecart
-import org.spongepowered.api.entity.vehicle.minecart.MobSpawnerMinecart
-import org.spongepowered.api.entity.vehicle.minecart.TNTMinecart
 import org.spongepowered.api.entity.EntityType as SEntityType
 
-fun Class<out Entity>.entityType(): EntityType = when (this) {
-    Item::class.java -> EntityType.DROPPED_ITEM
-    ExperienceOrb::class.java -> EntityType.EXPERIENCE_ORB
-    AreaEffectCloud::class.java -> EntityType.AREA_EFFECT_CLOUD
-    ElderGuardian::class.java -> EntityType.ELDER_GUARDIAN
-    WitherSkeleton::class.java -> EntityType.WITHER_SKELETON
-    Stray::class.java -> EntityType.STRAY
-    Egg::class.java -> EntityType.EGG
-    LeashHitch::class.java -> EntityType.LEASH_HITCH
-    Painting::class.java -> EntityType.PAINTING
-    Arrow::class.java -> EntityType.ARROW
-    Snowball::class.java -> EntityType.SNOWBALL
-    Fireball::class.java -> EntityType.FIREBALL
-    SmallFireball::class.java -> EntityType.SMALL_FIREBALL
-    EnderPearl::class.java -> EntityType.ENDER_PEARL
-    EnderSignal::class.java -> EntityType.ENDER_SIGNAL
-    SplashPotion::class.java -> EntityType.SPLASH_POTION
-    ThrownExpBottle::class.java -> EntityType.THROWN_EXP_BOTTLE
-    ItemFrame::class.java -> EntityType.ITEM_FRAME
-    WitherSkull::class.java -> EntityType.WITHER_SKULL
-    PrimedTNT::class.java -> EntityType.PRIMED_TNT
-    FallingBlock::class.java -> EntityType.FALLING_BLOCK
-    Firework::class.java -> EntityType.FIREWORK
-    Husk::class.java -> EntityType.HUSK
-    SpectralArrow::class.java -> EntityType.SPECTRAL_ARROW
-    ShulkerBullet::class.java -> EntityType.SHULKER_BULLET
-    DragonFireball::class.java -> EntityType.DRAGON_FIREBALL
-    ZombieVillager::class.java -> EntityType.ZOMBIE_VILLAGER
-    SkeletonHorse::class.java -> EntityType.SKELETON_HORSE
-    ZombieHorse::class.java -> EntityType.ZOMBIE_HORSE
-    ArmorStand::class.java -> EntityType.ARMOR_STAND
-    Donkey::class.java -> EntityType.DONKEY
-    Mule::class.java -> EntityType.MULE
-    EvokerFangs::class.java -> EntityType.EVOKER_FANGS
-    Evoker::class.java -> EntityType.EVOKER
-    Vex::class.java -> EntityType.VEX
-    Vindicator::class.java -> EntityType.VINDICATOR
-    Illusioner::class.java -> EntityType.ILLUSIONER
-    CommandMinecart::class.java -> EntityType.MINECART_COMMAND
-    Boat::class.java -> EntityType.BOAT
-    Minecart::class.java -> EntityType.MINECART
-    ChestMinecart::class.java -> EntityType.MINECART_CHEST
-    FurnaceMinecart::class.java -> EntityType.MINECART_FURNACE
-    TNTMinecart::class.java-> EntityType.MINECART_TNT
-    HopperMinecart::class.java -> EntityType.MINECART_HOPPER
-    MobSpawnerMinecart::class.java -> EntityType.MINECART_MOB_SPAWNER
-    Creeper::class.java -> EntityType.CREEPER
-    Skeleton::class.java -> EntityType.SKELETON
-    Spider::class.java -> EntityType.SPIDER
-    Giant::class.java -> EntityType.GIANT
-    Zombie::class.java -> EntityType.ZOMBIE
-    Slime::class.java -> EntityType.SLIME
-    Ghast::class.java-> EntityType.GHAST
-    PigZombie::class.java -> EntityType.PIG_ZOMBIE
-    Enderman::class.java -> EntityType.ENDERMAN
-    CaveSpider::class.java -> EntityType.CAVE_SPIDER
-    Silverfish::class.java -> EntityType.SILVERFISH
-    Blaze::class.java -> EntityType.BLAZE
-    MagmaCube::class.java -> EntityType.MAGMA_CUBE
-    EnderDragon::class.java -> EntityType.ENDER_DRAGON
-    Wither::class.java -> EntityType.WITHER
-    Bat::class.java -> EntityType.BAT
-    Witch::class.java -> EntityType.WITCH
-    Endermite::class.java -> EntityType.ENDERMITE
-    Guardian::class.java -> EntityType.GUARDIAN
-    Shulker::class.java -> EntityType.SHULKER
-    Pig::class.java -> EntityType.PIG
-    Sheep::class.java -> EntityType.SHEEP
-    Cow::class.java -> EntityType.COW
-    Chicken::class.java -> EntityType.CHICKEN
-    Squid::class.java -> EntityType.SQUID
-    Wolf::class.java -> EntityType.WOLF
-    MushroomCow::class.java -> EntityType.MUSHROOM_COW
-    Snowman::class.java -> EntityType.SNOWMAN
-    Ocelot::class.java -> EntityType.OCELOT
-    IronGolem::class.java -> EntityType.IRON_GOLEM
-    Horse::class.java -> EntityType.HORSE
-    Rabbit::class.java -> EntityType.RABBIT
-    PolarBear::class.java -> EntityType.POLAR_BEAR
-    Llama::class.java -> EntityType.LLAMA
-    LlamaSpit::class.java -> EntityType.LLAMA_SPIT
-    Parrot::class.java -> EntityType.PARROT
-    Villager::class.java -> EntityType.VILLAGER
-    EnderCrystal::class.java -> EntityType.ENDER_CRYSTAL
-    LingeringPotion::class.java -> EntityType.LINGERING_POTION
-    FishHook::class.java -> EntityType.FISHING_HOOK
-    LightningStrike::class.java -> EntityType.LIGHTNING
-    Weather::class.java -> EntityType.WEATHER
-    Player::class.java -> EntityType.PLAYER
-    ComplexEntityPart::class.java -> EntityType.COMPLEX_PART
-    TippedArrow::class.java -> EntityType.TIPPED_ARROW
-    else -> EntityType.UNKNOWN
-}
+private val typeToClassMap: BiMap<EntityType, Class<out Entity>> = HashBiMap.create(EntityType.values().associate {
+    it to when (it) {
+        EntityType.DROPPED_ITEM -> Item::class.java
+        EntityType.EXPERIENCE_ORB -> ExperienceOrb::class.java
+        EntityType.AREA_EFFECT_CLOUD -> AreaEffectCloud::class.java
+        EntityType.ELDER_GUARDIAN -> ElderGuardian::class.java
+        EntityType.WITHER_SKELETON -> WitherSkeleton::class.java
+        EntityType.STRAY -> Stray::class.java
+        EntityType.EGG -> Egg::class.java
+        EntityType.LEASH_HITCH -> LeashHitch::class.java
+        EntityType.PAINTING -> Painting::class.java
+        EntityType.ARROW -> Arrow::class.java
+        EntityType.SNOWBALL -> Snowball::class.java
+        EntityType.FIREBALL -> Fireball::class.java
+        EntityType.SMALL_FIREBALL -> SmallFireball::class.java
+        EntityType.ENDER_PEARL -> EnderPearl::class.java
+        EntityType.ENDER_SIGNAL -> EnderSignal::class.java
+        EntityType.SPLASH_POTION -> SplashPotion::class.java
+        EntityType.THROWN_EXP_BOTTLE -> ThrownExpBottle::class.java
+        EntityType.ITEM_FRAME -> ItemFrame::class.java
+        EntityType.WITHER_SKULL -> WitherSkull::class.java
+        EntityType.PRIMED_TNT -> TNTPrimed::class.java
+        EntityType.FALLING_BLOCK -> FallingBlock::class.java
+        EntityType.FIREWORK -> Firework::class.java
+        EntityType.HUSK -> Husk::class.java
+        EntityType.SPECTRAL_ARROW -> SpectralArrow::class.java
+        EntityType.SHULKER_BULLET -> ShulkerBullet::class.java
+        EntityType.DRAGON_FIREBALL -> DragonFireball::class.java
+        EntityType.ZOMBIE_VILLAGER -> ZombieVillager::class.java
+        EntityType.SKELETON_HORSE -> SkeletonHorse::class.java
+        EntityType.ZOMBIE_HORSE -> ZombieHorse::class.java
+        EntityType.ARMOR_STAND -> ArmorStand::class.java
+        EntityType.DONKEY -> Donkey::class.java
+        EntityType.MULE -> Mule::class.java
+        EntityType.EVOKER_FANGS -> EvokerFangs::class.java
+        EntityType.EVOKER -> Evoker::class.java
+        EntityType.VEX -> Vex::class.java
+        EntityType.VINDICATOR -> Vindicator::class.java
+        EntityType.ILLUSIONER -> Illusioner::class.java
+        EntityType.MINECART_COMMAND -> CommandMinecart::class.java
+        EntityType.BOAT -> Boat::class.java
+        EntityType.MINECART -> Minecart::class.java
+        EntityType.MINECART_CHEST -> StorageMinecart::class.java
+        EntityType.MINECART_FURNACE -> PoweredMinecart::class.java
+        EntityType.MINECART_TNT -> ExplosiveMinecart::class.java
+        EntityType.MINECART_HOPPER -> HopperMinecart::class.java
+        EntityType.MINECART_MOB_SPAWNER -> SpawnerMinecart::class.java
+        EntityType.CREEPER -> Creeper::class.java
+        EntityType.SKELETON -> Skeleton::class.java
+        EntityType.SPIDER -> Spider::class.java
+        EntityType.GIANT -> Giant::class.java
+        EntityType.ZOMBIE -> Zombie::class.java
+        EntityType.SLIME -> Slime::class.java
+        EntityType.GHAST -> Ghast::class.java
+        EntityType.PIG_ZOMBIE -> PigZombie::class.java
+        EntityType.ENDERMAN -> Enderman::class.java
+        EntityType.CAVE_SPIDER -> CaveSpider::class.java
+        EntityType.SILVERFISH -> Silverfish::class.java
+        EntityType.BLAZE -> Blaze::class.java
+        EntityType.MAGMA_CUBE -> MagmaCube::class.java
+        EntityType.ENDER_DRAGON -> EnderDragon::class.java
+        EntityType.WITHER -> Wither::class.java
+        EntityType.BAT -> Bat::class.java
+        EntityType.WITCH -> Witch::class.java
+        EntityType.ENDERMITE -> Endermite::class.java
+        EntityType.GUARDIAN -> Guardian::class.java
+        EntityType.SHULKER -> Shulker::class.java
+        EntityType.PIG -> Pig::class.java
+        EntityType.SHEEP -> Sheep::class.java
+        EntityType.COW -> Cow::class.java
+        EntityType.CHICKEN -> Chicken::class.java
+        EntityType.SQUID -> Squid::class.java
+        EntityType.WOLF -> Wolf::class.java
+        EntityType.MUSHROOM_COW -> MushroomCow::class.java
+        EntityType.SNOWMAN -> Snowman::class.java
+        EntityType.OCELOT -> Ocelot::class.java
+        EntityType.IRON_GOLEM -> IronGolem::class.java
+        EntityType.HORSE -> Horse::class.java
+        EntityType.RABBIT -> Rabbit::class.java
+        EntityType.POLAR_BEAR -> PolarBear::class.java
+        EntityType.LLAMA -> Llama::class.java
+        EntityType.LLAMA_SPIT -> LlamaSpit::class.java
+        EntityType.PARROT -> Parrot::class.java
+        EntityType.VILLAGER -> Villager::class.java
+        EntityType.ENDER_CRYSTAL -> EnderCrystal::class.java
+        EntityType.LINGERING_POTION -> LingeringPotion::class.java
+        EntityType.FISHING_HOOK -> FishHook::class.java
+        EntityType.LIGHTNING -> LightningStrike::class.java
+        EntityType.WEATHER -> Weather::class.java
+        EntityType.PLAYER -> Player::class.java
+        EntityType.COMPLEX_PART -> ComplexEntityPart::class.java
+        EntityType.TIPPED_ARROW -> TippedArrow::class.java
+        EntityType.UNKNOWN -> Entity::class.java
+    }
+})
 
-fun EntityType.sEntityType(): SEntityType = when (this) {
-    EntityType.DROPPED_ITEM -> EntityTypes.ITEM
-    EntityType.EXPERIENCE_ORB -> EntityTypes.EXPERIENCE_ORB
-    EntityType.AREA_EFFECT_CLOUD -> EntityTypes.AREA_EFFECT_CLOUD
-    EntityType.ELDER_GUARDIAN -> EntityTypes.ELDER_GUARDIAN
-    EntityType.WITHER_SKELETON -> EntityTypes.WITHER_SKELETON
-    EntityType.STRAY -> EntityTypes.STRAY
-    EntityType.EGG -> EntityTypes.EGG
-    EntityType.LEASH_HITCH -> EntityTypes.LEASH_HITCH
-    EntityType.PAINTING -> EntityTypes.PAINTING
-    EntityType.ARROW -> EntityTypes.TIPPED_ARROW
-    EntityType.SNOWBALL -> EntityTypes.SNOWBALL
-    EntityType.FIREBALL -> EntityTypes.FIREBALL
-    EntityType.SMALL_FIREBALL -> EntityTypes.SMALL_FIREBALL
-    EntityType.ENDER_PEARL -> EntityTypes.ENDER_PEARL
-    EntityType.ENDER_SIGNAL -> EntityTypes.EYE_OF_ENDER
-    EntityType.SPLASH_POTION -> EntityTypes.SPLASH_POTION
-    EntityType.THROWN_EXP_BOTTLE -> EntityTypes.THROWN_EXP_BOTTLE
-    EntityType.ITEM_FRAME -> EntityTypes.ITEM_FRAME
-    EntityType.WITHER_SKULL -> EntityTypes.WITHER_SKULL
-    EntityType.PRIMED_TNT -> EntityTypes.PRIMED_TNT
-    EntityType.FALLING_BLOCK -> EntityTypes.FALLING_BLOCK
-    EntityType.FIREWORK -> EntityTypes.FIREWORK
-    EntityType.HUSK -> EntityTypes.HUSK
-    EntityType.SPECTRAL_ARROW -> EntityTypes.SPECTRAL_ARROW
-    EntityType.SHULKER_BULLET -> EntityTypes.SHULKER_BULLET
-    EntityType.DRAGON_FIREBALL -> EntityTypes.DRAGON_FIREBALL
-    EntityType.ZOMBIE_VILLAGER -> EntityTypes.ZOMBIE_VILLAGER
-    EntityType.SKELETON_HORSE -> EntityTypes.SKELETON_HORSE
-    EntityType.ZOMBIE_HORSE -> EntityTypes.ZOMBIE_HORSE
-    EntityType.ARMOR_STAND -> EntityTypes.ARMOR_STAND
-    EntityType.DONKEY -> EntityTypes.DONKEY
-    EntityType.MULE -> EntityTypes.MULE
-    EntityType.EVOKER_FANGS -> EntityTypes.EVOCATION_FANGS
-    EntityType.EVOKER -> EntityTypes.EVOCATION_ILLAGER
-    EntityType.VEX -> EntityTypes.VEX
-    EntityType.VINDICATOR -> EntityTypes.VINDICATION_ILLAGER
-    EntityType.ILLUSIONER -> EntityTypes.ILLUSION_ILLAGER
-    EntityType.MINECART_COMMAND -> EntityTypes.COMMANDBLOCK_MINECART
-    EntityType.BOAT -> EntityTypes.BOAT
-    EntityType.MINECART -> EntityTypes.RIDEABLE_MINECART
-    EntityType.MINECART_CHEST -> EntityTypes.CHESTED_MINECART
-    EntityType.MINECART_FURNACE -> EntityTypes.FURNACE_MINECART
-    EntityType.MINECART_TNT -> EntityTypes.TNT_MINECART
-    EntityType.MINECART_HOPPER -> EntityTypes.HOPPER_MINECART
-    EntityType.MINECART_MOB_SPAWNER -> EntityTypes.MOB_SPAWNER_MINECART
-    EntityType.CREEPER -> EntityTypes.CREEPER
-    EntityType.SKELETON -> EntityTypes.SKELETON
-    EntityType.SPIDER -> EntityTypes.SPIDER
-    EntityType.GIANT -> EntityTypes.GIANT
-    EntityType.ZOMBIE -> EntityTypes.ZOMBIE
-    EntityType.SLIME -> EntityTypes.SLIME
-    EntityType.GHAST -> EntityTypes.GHAST
-    EntityType.PIG_ZOMBIE -> EntityTypes.PIG_ZOMBIE
-    EntityType.ENDERMAN -> EntityTypes.ENDERMAN
-    EntityType.CAVE_SPIDER -> EntityTypes.CAVE_SPIDER
-    EntityType.SILVERFISH -> EntityTypes.SILVERFISH
-    EntityType.BLAZE -> EntityTypes.BLAZE
-    EntityType.MAGMA_CUBE -> EntityTypes.MAGMA_CUBE
-    EntityType.ENDER_DRAGON -> EntityTypes.ENDER_DRAGON
-    EntityType.WITHER -> EntityTypes.WITHER
-    EntityType.BAT -> EntityTypes.BAT
-    EntityType.WITCH -> EntityTypes.WITCH
-    EntityType.ENDERMITE -> EntityTypes.ENDERMITE
-    EntityType.GUARDIAN -> EntityTypes.GUARDIAN
-    EntityType.SHULKER -> EntityTypes.SHULKER
-    EntityType.PIG -> EntityTypes.PIG
-    EntityType.SHEEP -> EntityTypes.SHEEP
-    EntityType.COW -> EntityTypes.COW
-    EntityType.CHICKEN -> EntityTypes.CHICKEN
-    EntityType.SQUID -> EntityTypes.SQUID
-    EntityType.WOLF -> EntityTypes.WOLF
-    EntityType.MUSHROOM_COW -> EntityTypes.MUSHROOM_COW
-    EntityType.SNOWMAN -> EntityTypes.SNOWMAN
-    EntityType.OCELOT -> EntityTypes.OCELOT
-    EntityType.IRON_GOLEM -> EntityTypes.IRON_GOLEM
-    EntityType.HORSE -> EntityTypes.HORSE
-    EntityType.RABBIT -> EntityTypes.RABBIT
-    EntityType.POLAR_BEAR -> EntityTypes.POLAR_BEAR
-    EntityType.LLAMA -> EntityTypes.LLAMA
-    EntityType.LLAMA_SPIT -> EntityTypes.LLAMA_SPIT
-    EntityType.PARROT -> EntityTypes.PARROT
-    EntityType.VILLAGER -> EntityTypes.VILLAGER
-    EntityType.ENDER_CRYSTAL -> EntityTypes.ENDER_CRYSTAL
-    EntityType.LINGERING_POTION -> EntityTypes.AREA_EFFECT_CLOUD
-    EntityType.FISHING_HOOK -> EntityTypes.FISHING_HOOK
-    EntityType.LIGHTNING -> EntityTypes.LIGHTNING
-    EntityType.WEATHER -> EntityTypes.WEATHER
-    EntityType.PLAYER -> EntityTypes.PLAYER
-    EntityType.COMPLEX_PART -> EntityTypes.COMPLEX_PART
-    EntityType.TIPPED_ARROW -> EntityTypes.TIPPED_ARROW
-    EntityType.UNKNOWN -> EntityTypes.UNKNOWN
-}
+fun Class<out Entity>.entityType(): EntityType = typeToClassMap.inverse()[this] ?: EntityType.UNKNOWN
 
-fun SEntityType.bEntityType(): EntityType = when (this) {
-    EntityTypes.ITEM -> EntityType.DROPPED_ITEM
-    EntityTypes.EXPERIENCE_ORB -> EntityType.EXPERIENCE_ORB
-    EntityTypes.AREA_EFFECT_CLOUD -> EntityType.AREA_EFFECT_CLOUD
-    EntityTypes.ELDER_GUARDIAN -> EntityType.ELDER_GUARDIAN
-    EntityTypes.WITHER_SKELETON -> EntityType.WITHER_SKELETON
-    EntityTypes.STRAY -> EntityType.STRAY
-    EntityTypes.EGG -> EntityType.EGG
-    EntityTypes.LEASH_HITCH -> EntityType.LEASH_HITCH
-    EntityTypes.PAINTING -> EntityType.PAINTING
-    EntityTypes.TIPPED_ARROW -> EntityType.ARROW
-    EntityTypes.SNOWBALL -> EntityType.SNOWBALL
-    EntityTypes.FIREBALL -> EntityType.FIREBALL
-    EntityTypes.SMALL_FIREBALL -> EntityType.SMALL_FIREBALL
-    EntityTypes.ENDER_PEARL -> EntityType.ENDER_PEARL
-    EntityTypes.EYE_OF_ENDER -> EntityType.ENDER_SIGNAL
-    EntityTypes.SPLASH_POTION -> EntityType.SPLASH_POTION
-    EntityTypes.THROWN_EXP_BOTTLE -> EntityType.THROWN_EXP_BOTTLE
-    EntityTypes.ITEM_FRAME -> EntityType.ITEM_FRAME
-    EntityTypes.WITHER_SKULL -> EntityType.WITHER_SKULL
-    EntityTypes.PRIMED_TNT -> EntityType.PRIMED_TNT
-    EntityTypes.FALLING_BLOCK -> EntityType.FALLING_BLOCK
-    EntityTypes.FIREWORK -> EntityType.FIREWORK
-    EntityTypes.HUSK -> EntityType.HUSK
-    EntityTypes.SPECTRAL_ARROW -> EntityType.SPECTRAL_ARROW
-    EntityTypes.SHULKER_BULLET -> EntityType.SHULKER_BULLET
-    EntityTypes.DRAGON_FIREBALL -> EntityType.DRAGON_FIREBALL
-    EntityTypes.ZOMBIE_VILLAGER -> EntityType.ZOMBIE_VILLAGER
-    EntityTypes.SKELETON_HORSE -> EntityType.SKELETON_HORSE
-    EntityTypes.ZOMBIE_HORSE -> EntityType.ZOMBIE_HORSE
-    EntityTypes.ARMOR_STAND -> EntityType.ARMOR_STAND
-    EntityTypes.DONKEY -> EntityType.DONKEY
-    EntityTypes.MULE -> EntityType.MULE
-    EntityTypes.EVOCATION_FANGS -> EntityType.EVOKER_FANGS
-    EntityTypes.EVOCATION_ILLAGER -> EntityType.EVOKER
-    EntityTypes.VEX -> EntityType.VEX
-    EntityTypes.VINDICATION_ILLAGER -> EntityType.VINDICATOR
-    EntityTypes.ILLUSION_ILLAGER -> EntityType.ILLUSIONER
-    EntityTypes.COMMANDBLOCK_MINECART -> EntityType.MINECART_COMMAND
-    EntityTypes.BOAT -> EntityType.BOAT
-    EntityTypes.RIDEABLE_MINECART -> EntityType.MINECART
-    EntityTypes.CHESTED_MINECART -> EntityType.MINECART_CHEST
-    EntityTypes.FURNACE_MINECART -> EntityType.MINECART_FURNACE
-    EntityTypes.TNT_MINECART -> EntityType.MINECART_TNT
-    EntityTypes.HOPPER_MINECART -> EntityType.MINECART_HOPPER
-    EntityTypes.MOB_SPAWNER_MINECART -> EntityType.MINECART_MOB_SPAWNER
-    EntityTypes.CREEPER -> EntityType.CREEPER
-    EntityTypes.SKELETON -> EntityType.SKELETON
-    EntityTypes.SPIDER -> EntityType.SPIDER
-    EntityTypes.GIANT -> EntityType.GIANT
-    EntityTypes.ZOMBIE -> EntityType.ZOMBIE
-    EntityTypes.SLIME -> EntityType.SLIME
-    EntityTypes.GHAST -> EntityType.GHAST
-    EntityTypes.PIG_ZOMBIE -> EntityType.PIG_ZOMBIE
-    EntityTypes.ENDERMAN -> EntityType.ENDERMAN
-    EntityTypes.CAVE_SPIDER -> EntityType.CAVE_SPIDER
-    EntityTypes.SILVERFISH -> EntityType.SILVERFISH
-    EntityTypes.BLAZE -> EntityType.BLAZE
-    EntityTypes.MAGMA_CUBE -> EntityType.MAGMA_CUBE
-    EntityTypes.ENDER_DRAGON -> EntityType.ENDER_DRAGON
-    EntityTypes.WITHER -> EntityType.WITHER
-    EntityTypes.BAT -> EntityType.BAT
-    EntityTypes.WITCH -> EntityType.WITCH
-    EntityTypes.ENDERMITE -> EntityType.ENDERMITE
-    EntityTypes.GUARDIAN -> EntityType.GUARDIAN
-    EntityTypes.SHULKER -> EntityType.SHULKER
-    EntityTypes.PIG -> EntityType.PIG
-    EntityTypes.SHEEP -> EntityType.SHEEP
-    EntityTypes.COW -> EntityType.COW
-    EntityTypes.CHICKEN -> EntityType.CHICKEN
-    EntityTypes.SQUID -> EntityType.SQUID
-    EntityTypes.WOLF -> EntityType.WOLF
-    EntityTypes.MUSHROOM_COW -> EntityType.MUSHROOM_COW
-    EntityTypes.SNOWMAN -> EntityType.SNOWMAN
-    EntityTypes.OCELOT -> EntityType.OCELOT
-    EntityTypes.IRON_GOLEM -> EntityType.IRON_GOLEM
-    EntityTypes.HORSE -> EntityType.HORSE
-    EntityTypes.RABBIT -> EntityType.RABBIT
-    EntityTypes.POLAR_BEAR -> EntityType.POLAR_BEAR
-    EntityTypes.LLAMA -> EntityType.LLAMA
-    EntityTypes.LLAMA_SPIT -> EntityType.LLAMA_SPIT
-    EntityTypes.PARROT -> EntityType.PARROT
-    EntityTypes.VILLAGER -> EntityType.VILLAGER
-    EntityTypes.ENDER_CRYSTAL -> EntityType.ENDER_CRYSTAL
-    EntityTypes.AREA_EFFECT_CLOUD -> EntityType.LINGERING_POTION
-    EntityTypes.FISHING_HOOK -> EntityType.FISHING_HOOK
-    EntityTypes.LIGHTNING -> EntityType.LIGHTNING
-    EntityTypes.WEATHER -> EntityType.WEATHER
-    EntityTypes.PLAYER -> EntityType.PLAYER
-    EntityTypes.COMPLEX_PART -> EntityType.COMPLEX_PART
-    EntityTypes.TIPPED_ARROW -> EntityType.TIPPED_ARROW
-    else -> EntityType.UNKNOWN
-    //todo modded
-}
+private val entityTypeMap: BiMap<EntityType, SEntityType> = HashBiMap.create(EntityType.values().associate {
+    it to when (it) {
+        EntityType.DROPPED_ITEM -> EntityTypes.ITEM
+        EntityType.EXPERIENCE_ORB -> EntityTypes.EXPERIENCE_ORB
+        EntityType.AREA_EFFECT_CLOUD -> EntityTypes.AREA_EFFECT_CLOUD
+        EntityType.ELDER_GUARDIAN -> EntityTypes.ELDER_GUARDIAN
+        EntityType.WITHER_SKELETON -> EntityTypes.WITHER_SKELETON
+        EntityType.STRAY -> EntityTypes.STRAY
+        EntityType.EGG -> EntityTypes.EGG
+        EntityType.LEASH_HITCH -> EntityTypes.LEASH_HITCH
+        EntityType.PAINTING -> EntityTypes.PAINTING
+        EntityType.ARROW -> EntityTypes.TIPPED_ARROW
+        EntityType.SNOWBALL -> EntityTypes.SNOWBALL
+        EntityType.FIREBALL -> EntityTypes.FIREBALL
+        EntityType.SMALL_FIREBALL -> EntityTypes.SMALL_FIREBALL
+        EntityType.ENDER_PEARL -> EntityTypes.ENDER_PEARL
+        EntityType.ENDER_SIGNAL -> EntityTypes.EYE_OF_ENDER
+        EntityType.SPLASH_POTION -> EntityTypes.SPLASH_POTION
+        EntityType.THROWN_EXP_BOTTLE -> EntityTypes.THROWN_EXP_BOTTLE
+        EntityType.ITEM_FRAME -> EntityTypes.ITEM_FRAME
+        EntityType.WITHER_SKULL -> EntityTypes.WITHER_SKULL
+        EntityType.PRIMED_TNT -> EntityTypes.PRIMED_TNT
+        EntityType.FALLING_BLOCK -> EntityTypes.FALLING_BLOCK
+        EntityType.FIREWORK -> EntityTypes.FIREWORK
+        EntityType.HUSK -> EntityTypes.HUSK
+        EntityType.SPECTRAL_ARROW -> EntityTypes.SPECTRAL_ARROW
+        EntityType.SHULKER_BULLET -> EntityTypes.SHULKER_BULLET
+        EntityType.DRAGON_FIREBALL -> EntityTypes.DRAGON_FIREBALL
+        EntityType.ZOMBIE_VILLAGER -> EntityTypes.ZOMBIE_VILLAGER
+        EntityType.SKELETON_HORSE -> EntityTypes.SKELETON_HORSE
+        EntityType.ZOMBIE_HORSE -> EntityTypes.ZOMBIE_HORSE
+        EntityType.ARMOR_STAND -> EntityTypes.ARMOR_STAND
+        EntityType.DONKEY -> EntityTypes.DONKEY
+        EntityType.MULE -> EntityTypes.MULE
+        EntityType.EVOKER_FANGS -> EntityTypes.EVOCATION_FANGS
+        EntityType.EVOKER -> EntityTypes.EVOCATION_ILLAGER
+        EntityType.VEX -> EntityTypes.VEX
+        EntityType.VINDICATOR -> EntityTypes.VINDICATION_ILLAGER
+        EntityType.ILLUSIONER -> EntityTypes.ILLUSION_ILLAGER
+        EntityType.MINECART_COMMAND -> EntityTypes.COMMANDBLOCK_MINECART
+        EntityType.BOAT -> EntityTypes.BOAT
+        EntityType.MINECART -> EntityTypes.RIDEABLE_MINECART
+        EntityType.MINECART_CHEST -> EntityTypes.CHESTED_MINECART
+        EntityType.MINECART_FURNACE -> EntityTypes.FURNACE_MINECART
+        EntityType.MINECART_TNT -> EntityTypes.TNT_MINECART
+        EntityType.MINECART_HOPPER -> EntityTypes.HOPPER_MINECART
+        EntityType.MINECART_MOB_SPAWNER -> EntityTypes.MOB_SPAWNER_MINECART
+        EntityType.CREEPER -> EntityTypes.CREEPER
+        EntityType.SKELETON -> EntityTypes.SKELETON
+        EntityType.SPIDER -> EntityTypes.SPIDER
+        EntityType.GIANT -> EntityTypes.GIANT
+        EntityType.ZOMBIE -> EntityTypes.ZOMBIE
+        EntityType.SLIME -> EntityTypes.SLIME
+        EntityType.GHAST -> EntityTypes.GHAST
+        EntityType.PIG_ZOMBIE -> EntityTypes.PIG_ZOMBIE
+        EntityType.ENDERMAN -> EntityTypes.ENDERMAN
+        EntityType.CAVE_SPIDER -> EntityTypes.CAVE_SPIDER
+        EntityType.SILVERFISH -> EntityTypes.SILVERFISH
+        EntityType.BLAZE -> EntityTypes.BLAZE
+        EntityType.MAGMA_CUBE -> EntityTypes.MAGMA_CUBE
+        EntityType.ENDER_DRAGON -> EntityTypes.ENDER_DRAGON
+        EntityType.WITHER -> EntityTypes.WITHER
+        EntityType.BAT -> EntityTypes.BAT
+        EntityType.WITCH -> EntityTypes.WITCH
+        EntityType.ENDERMITE -> EntityTypes.ENDERMITE
+        EntityType.GUARDIAN -> EntityTypes.GUARDIAN
+        EntityType.SHULKER -> EntityTypes.SHULKER
+        EntityType.PIG -> EntityTypes.PIG
+        EntityType.SHEEP -> EntityTypes.SHEEP
+        EntityType.COW -> EntityTypes.COW
+        EntityType.CHICKEN -> EntityTypes.CHICKEN
+        EntityType.SQUID -> EntityTypes.SQUID
+        EntityType.WOLF -> EntityTypes.WOLF
+        EntityType.MUSHROOM_COW -> EntityTypes.MUSHROOM_COW
+        EntityType.SNOWMAN -> EntityTypes.SNOWMAN
+        EntityType.OCELOT -> EntityTypes.OCELOT
+        EntityType.IRON_GOLEM -> EntityTypes.IRON_GOLEM
+        EntityType.HORSE -> EntityTypes.HORSE
+        EntityType.RABBIT -> EntityTypes.RABBIT
+        EntityType.POLAR_BEAR -> EntityTypes.POLAR_BEAR
+        EntityType.LLAMA -> EntityTypes.LLAMA
+        EntityType.LLAMA_SPIT -> EntityTypes.LLAMA_SPIT
+        EntityType.PARROT -> EntityTypes.PARROT
+        EntityType.VILLAGER -> EntityTypes.VILLAGER
+        EntityType.ENDER_CRYSTAL -> EntityTypes.ENDER_CRYSTAL
+        EntityType.LINGERING_POTION -> EntityTypes.AREA_EFFECT_CLOUD
+        EntityType.FISHING_HOOK -> EntityTypes.FISHING_HOOK
+        EntityType.LIGHTNING -> EntityTypes.LIGHTNING
+        EntityType.WEATHER -> EntityTypes.WEATHER
+        EntityType.PLAYER -> EntityTypes.PLAYER
+        EntityType.COMPLEX_PART -> EntityTypes.COMPLEX_PART
+        EntityType.TIPPED_ARROW -> EntityTypes.TIPPED_ARROW
+        EntityType.UNKNOWN -> EntityTypes.UNKNOWN
+    }
+})
+
+fun EntityType.sEntityType(): SEntityType = entityTypeMap.getValue(this)
+
+fun SEntityType.bEntityType(): EntityType = entityTypeMap.inverse()[this] ?: EntityType.UNKNOWN //todo modded

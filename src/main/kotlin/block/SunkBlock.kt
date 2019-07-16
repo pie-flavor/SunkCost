@@ -24,6 +24,7 @@ import org.bukkit.metadata.Metadatable
 import org.jetbrains.annotations.Contract
 import org.spongepowered.api.block.BlockTypes
 import org.spongepowered.api.world.BlockChangeFlags
+import java.util.Objects
 import org.spongepowered.api.world.Location as SLocation
 import org.spongepowered.api.world.World as SWorld
 
@@ -188,4 +189,9 @@ class SunkBlock(val location: SLocation<SWorld>) : Block, Metadatable by SunkPro
     }
 
     override fun getHumidity(): Double = location.biome.humidity
+
+    override fun equals(other: Any?): Boolean = other is Block && x == other.x && y == other.y && z == other.z && world.uid == other.world.uid
+
+    override fun hashCode(): Int = Objects.hash(x, y, z, world.uid)
+
 }

@@ -757,4 +757,5 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     override fun openWorkbench(location: Location?, force: Boolean): InventoryView {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
 }
