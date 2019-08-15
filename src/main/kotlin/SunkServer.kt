@@ -8,6 +8,7 @@ import flavor.pie.sunkcost.inventory.SunkInventoryHolder
 import flavor.pie.sunkcost.inventory.toArchetype
 import flavor.pie.sunkcost.inventory.toGuiId
 import flavor.pie.sunkcost.plugin.SunkPluginManager
+import flavor.pie.sunkcost.scoreboards.SunkScoreboardManager
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.BanList
 import org.bukkit.GameMode
@@ -163,9 +164,7 @@ object SunkServer : Server {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getScoreboardManager(): ScoreboardManager {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getScoreboardManager(): ScoreboardManager = SunkScoreboardManager
 
     override fun createChunkData(world: World?): ChunkGenerator.ChunkData {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

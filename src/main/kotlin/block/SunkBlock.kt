@@ -31,11 +31,11 @@ import org.spongepowered.api.world.World as SWorld
 class SunkBlock(val location: SLocation<SWorld>) : Block, Metadatable by SunkProxyMetadatable(location) {
 
     override fun getLightFromSky(): Byte {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // deficiency
     }
 
     override fun getLightLevel(): Byte {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // deficiency
     }
 
     override fun setType(type: Material) {

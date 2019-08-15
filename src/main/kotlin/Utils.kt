@@ -23,7 +23,7 @@ import org.spongepowered.api.text.format.TextStyle
 import org.spongepowered.api.text.format.TextStyles
 import org.spongepowered.api.text.selector.Selector
 
-val chatColorMap: Map<ChatColor, TextFormat> = mapOf(
+private val chatColorMap: Map<ChatColor, TextFormat> = mapOf(
     ChatColor.AQUA to TextColors.AQUA.format(),
     ChatColor.BLACK to TextColors.BLACK.format(),
     ChatColor.BLUE to TextColors.BLUE.format(),
@@ -48,7 +48,7 @@ val chatColorMap: Map<ChatColor, TextFormat> = mapOf(
     ChatColor.YELLOW to TextColors.YELLOW.format()
 )
 
-fun ChatColor.toTextColor(): TextFormat = chatColorMap.getValue(this)
+fun ChatColor.textFormat(): TextFormat = chatColorMap.getValue(this)
 
 fun TextColor.format(): TextFormat = TextFormat.of(this)
 fun TextStyle.format(): TextFormat = TextFormat.of(this)
@@ -70,7 +70,7 @@ fun BaseComponent.toText(): Text {
         else -> Text.builder()
     }
     var format = if (this.colorRaw != null) {
-        this.colorRaw.toTextColor()
+        this.colorRaw.textFormat()
     } else {
         TextFormat.of()
     }

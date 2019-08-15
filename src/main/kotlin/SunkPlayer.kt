@@ -6,6 +6,7 @@ import flavor.pie.sunkcost.entity.SunkLivingEntity
 import flavor.pie.sunkcost.inventory.SunkItemStack
 import flavor.pie.sunkcost.inventory.mainHand
 import flavor.pie.sunkcost.material.toBlockState
+import flavor.pie.sunkcost.scoreboards.SunkScoreboard
 import org.bukkit.Achievement
 import org.bukkit.Effect
 import org.bukkit.GameMode
@@ -268,8 +269,8 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
         sPlayer[Keys.IS_SNEAKING] = sneak
     }
 
-    override fun setScoreboard(scoreboard: Scoreboard?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setScoreboard(scoreboard: Scoreboard) {
+        sPlayer.scoreboard = (scoreboard as SunkScoreboard).scoreboard
     }
 
     override fun getExp(): Float {
@@ -470,9 +471,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
         setResourcePack(url)
     }
 
-    override fun getScoreboard(): Scoreboard {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getScoreboard(): Scoreboard = SunkScoreboard(sPlayer.scoreboard)
 
     override fun setSaturation(value: Float) {
         sPlayer[Keys.SATURATION] = value.toDouble()

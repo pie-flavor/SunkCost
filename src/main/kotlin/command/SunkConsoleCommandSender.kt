@@ -4,6 +4,7 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.conversations.Conversation
 import org.bukkit.conversations.ConversationAbandonedEvent
 import org.spongepowered.api.command.source.ConsoleSource
+import org.spongepowered.api.text.serializer.TextSerializers
 
 class SunkConsoleCommandSender(source: ConsoleSource) : ConsoleCommandSender, SunkCommandSender(source) {
 
@@ -15,8 +16,8 @@ class SunkConsoleCommandSender(source: ConsoleSource) : ConsoleCommandSender, Su
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun sendRawMessage(message: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun sendRawMessage(message: String) {
+        source.sendMessage(TextSerializers.JSON.deserialize(message))
     }
 
     override fun isConversing(): Boolean {
