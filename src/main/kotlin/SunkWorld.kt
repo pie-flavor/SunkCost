@@ -2,11 +2,13 @@
 
 package flavor.pie.sunkcost
 
+import com.flowpowered.math.vector.Vector3d
 import com.flowpowered.math.vector.Vector3i
 import flavor.pie.kludge.*
 import flavor.pie.sunkcost.block.biome
 import flavor.pie.sunkcost.block.biomeType
 import flavor.pie.sunkcost.entity.SunkEntity
+import flavor.pie.sunkcost.entity.SunkLivingEntity
 import flavor.pie.sunkcost.entity.entityType
 import flavor.pie.sunkcost.entity.sEntityType
 import flavor.pie.sunkcost.inventory.SunkItemStack
@@ -47,7 +49,10 @@ import org.bukkit.util.Consumer
 import org.bukkit.util.Vector
 import org.jetbrains.annotations.Contract
 import org.spongepowered.api.data.key.Keys
+import org.spongepowered.api.effect.particle.ParticleOptions
+import org.spongepowered.api.effect.particle.ParticleTypes
 import org.spongepowered.api.entity.EntityTypes
+import org.spongepowered.api.entity.living.Living
 import org.spongepowered.api.entity.weather.Lightning
 import java.io.File
 import java.util.UUID
@@ -416,28 +421,31 @@ class SunkWorld(val world: SWorld) : World, Metadatable by SunkProxyMetadatable(
         world.properties.rainTime = duration
     }
 
-    override fun getMaxHeight(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getMaxHeight(): Int = world.blockMax.y
 
     override fun getKeepSpawnInMemory(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun spawnParticle(particle: Particle?, location: Location?, count: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun spawnParticle(particle: Particle, location: Location, count: Int) = spawnParticle(particle, location.x, location.y, location.z, count, null)
 
-    override fun spawnParticle(particle: Particle?, x: Double, y: Double, z: Double, count: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun spawnParticle(particle: Particle, x: Double, y: Double, z: Double, count: Int) = spawnParticle(particle, x, y, z, count, null)
 
-    override fun <T : Any?> spawnParticle(particle: Particle?, location: Location?, count: Int, data: T) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun <T : Any> spawnParticle(particle: Particle, location: Location, count: Int, data: T?) = spawnParticle(particle, location.x, location.y, location.z, count, data)
 
-    override fun <T : Any?> spawnParticle(particle: Particle?, x: Double, y: Double, z: Double, count: Int, data: T) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun <T : Any> spawnParticle(particle: Particle, x: Double, y: Double, z: Double, count: Int, data: T?) {
+        val effect = particleEffectOf {
+            type(particle.particleType() ?: ParticleTypes.BARRIER)
+            quantity(count)
+            if (data != null) {
+                when (particle) {
+                    Particle.ITEM_CRACK -> option(ParticleOptions.ITEM_STACK_SNAPSHOT, SunkItemStack(data as? ItemStack ?: throw IllegalArgumentException("data")).stack.createSnapshot())
+                    Particle.BLOCK_CRACK, Particle.BLOCK_DUST, Particle.FALLING_DUST -> option(ParticleOptions.BLOCK_STATE, (data as? MaterialData)?.toBlockState() ?: throw IllegalArgumentException("data"))
+                    else -> {}
+                }
+            }
+        }
+        world.spawnParticles(effect, Vector3d(x, y, z))
     }
 
     override fun spawnParticle(
@@ -574,28 +582,20 @@ class SunkWorld(val world: SWorld) : World, Metadatable by SunkProxyMetadatable(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getLivingEntities(): MutableList<LivingEntity> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getLivingEntities(): List<LivingEntity> = world.getEntities { it is Living }.map { SunkLivingEntity(it as Living) }
 
-    override fun getName(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getName(): String = world.name
 
-    override fun getLoadedChunks(): Array<Chunk> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getLoadedChunks(): Array<Chunk> = world.loadedChunks.map { SunkChunk(it) }.toTypedArray()
 
     override fun canGenerateStructures(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun unloadChunkRequest(x: Int, z: Int): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun unloadChunkRequest(x: Int, z: Int): Boolean = unloadChunkRequest(x, z, true)
 
     override fun unloadChunkRequest(x: Int, z: Int, safe: Boolean): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return world.getChunk(x, 0, z).unwrap()?.let { world.unloadChunk(it) } ?: false // deficiency
     }
 
     override fun strikeLightningEffect(loc: Location): LightningStrike? {
@@ -713,13 +713,9 @@ class SunkWorld(val world: SWorld) : World, Metadatable by SunkProxyMetadatable(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getBlockTypeIdAt(x: Int, y: Int, z: Int): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getBlockTypeIdAt(x: Int, y: Int, z: Int): Int = world.getBlockType(x, y, z).toMaterial().id
 
-    override fun getBlockTypeIdAt(location: Location?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getBlockTypeIdAt(location: Location): Int = world.getBlockType(location.blockX, location.blockY, location.blockZ).toMaterial().id
 
     override fun getGenerator(): ChunkGenerator {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -729,9 +725,7 @@ class SunkWorld(val world: SWorld) : World, Metadatable by SunkProxyMetadatable(
         world.properties.isThundering = thundering
     }
 
-    override fun getHumidity(x: Int, z: Int): Double {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getHumidity(x: Int, z: Int): Double = world.getBiome(x, 0, z).humidity
 
     override fun equals(other: Any?): Boolean = other is SunkWorld && other.world == world
 
@@ -758,7 +752,7 @@ class SunkWorld(val world: SWorld) : World, Metadatable by SunkProxyMetadatable(
             super.playEffect(location, effect, id, data, offsetX, offsetY, offsetZ, speed, particleCount, radius)
         }
 
-        override fun strikeLightningEffect(loc: Location?, isSilent: Boolean): LightningStrike {
+        override fun strikeLightningEffect(loc: Location, isSilent: Boolean): LightningStrike {
             return super.strikeLightningEffect(loc, isSilent)
         }
 

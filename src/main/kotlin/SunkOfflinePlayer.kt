@@ -46,7 +46,7 @@ open class SunkOfflinePlayer(val user: User): OfflinePlayer, Permissible by Sunk
     override fun getLastPlayed(): Long = user[Keys.LAST_DATE_PLAYED].unwrap()?.epochSecond ?: 0
 
     override fun serialize(): MutableMap<String, Any> {
-        TODO("serialization") //To change body of created functions use File | Settings | File Templates.
+        TODO("serialization")
     }
 
     override fun getFirstPlayed(): Long = user[Keys.FIRST_DATE_PLAYED].unwrap()?.epochSecond ?: 0

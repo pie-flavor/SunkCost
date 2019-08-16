@@ -62,6 +62,7 @@ fun HoverEvent.hoverAction(): HoverAction<*> {
 }
 
 fun BaseComponent.toText(): Text {
+
     val builder = when (this) {
         is TextComponent -> Text.builder(this.text)
         is TranslatableComponent -> GameRegistry.getTranslationById(this.translate).unwrap()?.let { Text.builder(it) } ?: Text.builder(this.translate)

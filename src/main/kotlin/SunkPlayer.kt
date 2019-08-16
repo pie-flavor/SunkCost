@@ -1,8 +1,11 @@
+@file:Suppress("DEPRECATION")
+
 package flavor.pie.sunkcost
 
 import flavor.pie.kludge.*
 import flavor.pie.sunkcost.entity.SunkEntity
 import flavor.pie.sunkcost.entity.SunkLivingEntity
+import flavor.pie.sunkcost.inventory.SunkInventory
 import flavor.pie.sunkcost.inventory.SunkItemStack
 import flavor.pie.sunkcost.inventory.mainHand
 import flavor.pie.sunkcost.material.toBlockState
@@ -85,7 +88,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun getListeningPluginChannels(): Set<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") //deficiency
     }
 
     override fun setAllowFlight(flight: Boolean) {
@@ -126,13 +129,9 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
 
     override fun updateInventory() {} // lol
 
-    override fun getEnderChest(): Inventory {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getEnderChest(): Inventory = SunkInventory(sPlayer.enderChestInventory)
 
-    override fun isBlocking(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun isBlocking(): Boolean = false // deficiency
 
     override fun isSleepingIgnored(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -143,11 +142,11 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     override fun getWalkSpeed(): Float = sPlayer[Keys.WALKING_SPEED].unwrap()?.toFloat() ?: 0.1f
 
     override fun showPlayer(player: Player?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // deficiency
     }
 
     override fun showPlayer(plugin: Plugin?, player: Player?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // deficiency
     }
 
     override fun getStatistic(statistic: Statistic): Int = sPlayer[Keys.STATISTICS].unwrap()?.get(statistic.sStatistic())?.toInt() ?: -1
@@ -160,8 +159,8 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun setDisplayName(name: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun setDisplayName(name: String) {
+        sPlayer[Keys.DISPLAY_NAME] = name.textByCode()
     }
 
     override fun setItemInHand(item: ItemStack) {
@@ -293,11 +292,11 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun setPlayerWeather(type: WeatherType?) {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun getSleepTicks(): Int {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun getInventory(): PlayerInventory {
@@ -313,7 +312,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun getPlayerWeather(): WeatherType {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun spawnParticle(particle: Particle?, location: Location?, count: Int) {
@@ -478,7 +477,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun resetPlayerTime() {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun hidePlayer(player: Player?) {
@@ -505,7 +504,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
         (sPlayer[Keys.TARGETED_LOCATION].unwrap()?.let { sPlayer.world.getLocation(it) } ?: sPlayer.world.spawnLocation).bLocation()
 
     override fun getPlayerTimeOffset(): Long {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun getTotalExperience(): Int = sPlayer[Keys.TOTAL_EXPERIENCE].orElse(0)
@@ -525,7 +524,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun loadData() {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun sendBlockChange(loc: Location, material: Material, data: Byte) {
@@ -541,7 +540,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun resetPlayerWeather() {
-        TODO("not implemented")
+        TODO("not implemented") // deficiency
     }
 
     override fun giveExp(amount: Int) {
@@ -559,7 +558,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun isHealthScaled(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // deficiency
     }
 
     override fun getAddress(): InetSocketAddress = sPlayer.connection.address
@@ -652,7 +651,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
     }
 
     override fun saveData() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // deficiency
     }
 
     override fun incrementStatistic(statistic: Statistic?) {
@@ -741,9 +740,7 @@ class SunkPlayer(val sPlayer: SPlayer): SunkLivingEntity(sPlayer), OfflinePlayer
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getDisplayName(): String {
-        TODO("not implemented")
-    }
+    override fun getDisplayName(): String? = sPlayer[Keys.DISPLAY_NAME].unwrap()?.stringByCode()
 
     override fun setResourcePack(url: String) {
         sPlayer.sendResourcePack(ResourcePacks.fromUri(URI(url)))
